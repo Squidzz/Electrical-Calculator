@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Electrical Calculator</h1> <!-- Title placed above "Select an Option" -->
+<h2>Select an Option</h2>
+<form action="{{ url_for('calculate') }}" method="POST" id="calculate-form">
+    <h3>Calculations</h3>
+    <label for="calculation">Type:</label>
+    <select name="calculation" id="calculation">
+        <option value="resistance">Resistance</option>
+        <option value="voltage">Voltage</option>
+        <option value="current">Current</option>
+        <option value="power">Power</option>
+        <option value="frequency">Frequency</option>
+        <option value="impedance">Impedance</option>
+    </select>
+    <input type="number" name="value1" id="value1" placeholder="Enter Voltage (V)" step="any" required>
+    <input type="number" name="value2" id="value2" placeholder="Enter Current (A)" step="any">
+    <button type="submit">Calculate</button>
+</form>
+
+<form action="{{ url_for('devices') }}" method="POST">
+    <h3>Devices</h3>
+    <label for="device">Device:</label>
+    <select name="device" id="device">
+        <option value="resistor">Resistor</option>
+        <option value="capacitor">Capacitor</option>
+        <option value="inductor">Inductor</option>
+    </select>
+    <label for="circuit">Circuit Type:</label>
+    <select name="circuit" id="circuit">
+        <option value="series">Series</option>
+        <option value="parallel">Parallel</option>
+    </select>
+    <div id="device-fields">
+        <input type="number" name="values[]" placeholder="Device Value" step="any" required>
+    </div>
+    <div id="buttons-container">
+        <button type="button" id="add-button" onclick="addField()">Add More</button>
+        <button type="button" id="remove-button" onclick="removeField()" style="display: none;">Remove</button>
+    </div>
+    <button type="submit">Calculate</button>
+</form>
+
+<script>
+    // Function to validate the calculations form
+    document.getElementById('calculate-form').addEventListener('submit', function(event) {
+        // Get the input fields for value1 and value2
+        const value1 = document.getElementById('value1').value.trim();
+        const value2 = document.getElementById('value2').value.trim();
+
+        // Check if both fields are filled
+        if (!value1 || !value2) {
+            alert('Please fill out both fields in the Calculations section before submitting.');
+            event.preventDefault(); // Prevent form submission
+        }
+    });
+
+    // Function to dynamically add input fields
+    function addField() {
+        const container = document.getElementById('device-fields');
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.name = 'values[]';
+        input.placeholder = 'Device Value';
+        input.step = 'any';
+        container.appendChild(input);
+
+        // Update button visibility
+        updateButtonVisibility();
+    }
+
+    // Function to dynamically remove the last input field
+    function removeField() {
+        const container = document.getElementById('device-fields');
+        if (container.children.length > 1) { // Ensure at least one field remains
+            container.removeChild(container.lastChild);
+        }
+
+        // Update button visibility
+        updateButtonVisibility();
+    }
+
+    // Function to update button visibility
+    function updateButtonVisibility() {
+        const container = document.getElementById('device-fields');
+        const removeButton = document.getElementById('remove-button');
+
+        // Show the Remove button only if more than one field exists
+        if (container.children.length > 1) {
+            removeButton.style.display = 'inline-block';
+        } else {
+            removeButton.style.display = 'none';
+        }
+    }
+
+    // Ensure initial button state when the page loads
+    document.addEventListener('DOMContentLoaded', function () {
+        updateButtonVisibility();
+    });
+</script>
+{% endblock %}
