@@ -101,4 +101,4 @@ def calculate_inductor(circuit_type, values):
     return "Invalid circuit type"
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
